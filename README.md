@@ -58,8 +58,66 @@ QtMetaOrm is based on c++ templates. For more API simplification, some Template 
 such as loop-enrolling, explicit full and partial template specializations etc. All required declarations are wrapped
 with fancy macroses, so all you need is include one header file and write a pair of declarations.
 
- 
- 
+### Usage (not ready for now)
+Suppose we have some class we want to make persistable:
+
+    //...before
+    class SomeClass{
+    public:
+        SomeClass();
+        qint32 id;
+        qint32 someInt;
+        QDateTime someTime;
+        QString someString;
+        QByteArray someRaw;
+    };
+    //...after
+    
+It's very simple, but its members are of the most popular data types used in databases. So we want to store our
+class objects, but we don't want to mess up with SQL and any type casting to/from QVariant etc. All we need is to 
+include our ORM header:
+
+    #include "qtmetaorm.hpp"
+    //...before
+    //
+
+inherit from QPO_Presistent template class, recursively passing SomeClass as template parameter:
+
+    //...before
+    class SomeClass : public QPO_Presistent<SomeClass> {
+    //...
+    
+and declare data schema and fields after class declaration:
+
+    //...after 
+    QPO_DECLARE_TABLE( "sometable", 5 )   //table name | fields count 
+    QPO_DECLARE_FIELD( SomeClass, qint32, id) //target class | field type | class data member
+    QPO_DECLARE_FIELD( SomeClass, qint32, someInt )
+    QPO_DECLARE_FIELD( SomeClass, QDateTime, someTime )
+    QPO_DECLARE_FIELD( SomeClass, QString, someString )
+    QPO_DECLARE_FIELD( SomeClass, QByteArray, someRaw )
+
+and here we are! We just declare data table for our object with 5 fields, and then we declare data fields in the 
+order they must appear in our database table. The first field declared is considered to be a primary key field (!).
+In our case it corresponds to 'id' member of SomeClass.
+
+> NOTE: Primary key is REQUIRED. By default QtMetaOrm uses the first declared field, thus primary key will always
+have 0 index in the table. Though it is possible to alter that behavior by using QPO_DECLARE_TABLE_PK macro with 
+last argument corresponding to PK field index.
+
+Now our objects of SomeClass can be stored to table "sometable" in our database. Field names created in the table
+will be that of data members, passed to QPO_DECLARE_FIELD macro. Here is the SQL code for created table in PostGre:
+
+    CREATE TABLE sometable (
+       id SERIAL PRIMARY KEY,
+       someInt INTEGER,
+       someTime INTEGER,
+       someString TEXT,
+       someRaw BYTEA
+       )
+
+> NOTE: QtMetaOrm uses some sort of unification on data types to avoid backend-specific stuff as much as possible
+
   
 
 
