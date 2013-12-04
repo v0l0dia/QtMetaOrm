@@ -1,0 +1,4 @@
+#ifndef QPO_PERSISTENT_H
+#define QPO_PERSISTENT_H
+
+#endif // QPO_PERSISTENT_H
