@@ -1,0 +1,15 @@
+Project structure:
+	/lib - library header files
+	/test - unit tests
+	/samples - example applications
+	
+Library files:
+	/lib
+		/qpo_base.h - main header file
+		/qpo_utils.h - helper stuff, loop enrollers, counters etc
+		/qpo_sugar.h - fancy macro definitions for general usage
+		/qpo_database.h - database related functionality
+		/qpo_persistent.h - persistent object base classes
+		/qpo_condition.h - filter conditions and operations
+		/qpo_queryset.h - base query set classes
+		/qpo_sqltypes.h - database types to Qt types mappings
